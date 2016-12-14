@@ -27,7 +27,7 @@ object ParserHolder {
 
     val doubleParser = Reference<Double>().lazy()
     init {
-        doubleParser.
+//        doubleParser.
     }
 }
 
