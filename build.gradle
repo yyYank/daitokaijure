@@ -25,6 +25,7 @@ repositories {
 
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib:1.0.5'
+    compile group: 'org.jparsec', name: 'jparsec', version: '3.0-rc1'
     testCompile 'junit:junit:4.12'
 }
 
