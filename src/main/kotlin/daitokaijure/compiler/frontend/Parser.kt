@@ -23,7 +23,7 @@ object ParserHolder {
     val fractional = Patterns.isChar('.').next(digits)
     val number = digits.next(fractional.optional())
     val scannerNumber = Scanners.INTEGER
-    val l_number : Parser<Tok> = Lexers.lexer(s_number, Tokenizers.forDecimal());
+//    val l_number : Parser<Tok> = Lexers.lexer(s_number, Tokenizers.forDecimal());
 
     val doubleParser = Reference<Double>().lazy()
     init {
