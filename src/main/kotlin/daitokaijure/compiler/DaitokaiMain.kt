@@ -4,7 +4,6 @@ package daitokaijure.compiler
  * Created by yy_yank on 2016/12/16.
  */
 fun main(args: Array<String>) {
-
     // よくある四則演算
     println(DaitokaiParser.CALCULATOR.parse("3 * 3"))
     println(DaitokaiParser.CALCULATOR.parse("3 + 3"))
@@ -44,4 +43,16 @@ fun main(args: Array<String>) {
             """)
     )
 
+
+    println(
+            DaitokaiParser.DAITOKAI_CALCULATOR.parse("""
+                "a" via "b"
+            """)
+    )
+
+    println(
+            DaitokaiParser.DAITOKAI_CALCULATOR.parse("""
+                "岡山" via "服部"
+            """)
+    )
 }

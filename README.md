@@ -1,3 +1,3 @@
 # daitokaijure
 
-daitokaijure is jvm-language writen by Kotlin.
+daitokaijure going to be jvm-language writen by Kotlin.
