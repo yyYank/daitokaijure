@@ -9,10 +9,9 @@ import java.util.function.Function as func
  */
 object DaitokaiParser {
     private val OPERATORS = Terminals.operators("+", "-", "*", "/", "(", ")", "ppap", "daitokai")
+    internal val STRING = Terminals.StringLiteral.PARSER.map<String>(func<String, String> { it.toString() })
+    internal val NUMBER = Terminals.DecimalLiteral.PARSER.map<Double>(func<String, Double> { java.lang.Double.valueOf(it) })
 
-    internal val STRING = Terminals.StringLiteral.PARSER.map<String>(java.util.function.Function<String, String> { it.toString() })
-
-    internal val NUMBER = Terminals.DecimalLiteral.PARSER.map<Double>(java.util.function.Function<String, Double> { java.lang.Double.valueOf(it) })
 
     internal fun term(vararg names: String): Parser<*> {
         return OPERATORS.token(*names)
@@ -23,6 +22,7 @@ object DaitokaiParser {
     }
 
 
+    // パーザ定義
     internal fun calculator(atom: Parser<Double>): Parser<Double> {
         val ref = Parser.newReference<Double>()
         val unit = ref.lazy().between(term("("), term(")")).or(atom)
@@ -38,7 +38,8 @@ object DaitokaiParser {
         return parser
     }
 
-    internal fun stringCalculator(atom: Parser<String>): Parser<String> {
+    // パーザー定義
+    internal fun daitokaiCalculator(atom: Parser<String>): Parser<String> {
         val ref = Parser.newReference<String>()
         val unit = ref.lazy().between(term("("), term(")")).or(atom)
         val parser = OperatorTable<String>()
@@ -50,10 +51,13 @@ object DaitokaiParser {
         return parser
     }
 
+    // 字句解析器
     internal val TOKENIZER: Parser<*> = Parsers.or(Terminals.DecimalLiteral.TOKENIZER, OPERATORS.tokenizer())
 
+    // 字句解析器
     internal val STRING_TOKENIZER: Parser<*> = Parsers.or(Terminals.StringLiteral.DOUBLE_QUOTE_TOKENIZER, OPERATORS.tokenizer())
 
+    // パーザが許容する（無視するもの）
     internal val IGNORED = Parsers.or(
             Scanners.JAVA_LINE_COMMENT,
             Scanners.JAVA_BLOCK_COMMENT,
@@ -61,15 +65,6 @@ object DaitokaiParser {
             .skipMany()
 
     val CALCULATOR = calculator(NUMBER).from(TOKENIZER, IGNORED)
-    val STRING_CALCULATOR = stringCalculator(STRING).from(STRING_TOKENIZER, IGNORED)
+    val DAITOKAI_CALCULATOR = daitokaiCalculator(STRING).from(STRING_TOKENIZER, IGNORED)
 }
 
-fun main(args: Array<String>) {
-    println(DaitokaiParser.CALCULATOR.parse("3 * 3"))
-    println(DaitokaiParser.CALCULATOR.parse("3 + 3"))
-    println(DaitokaiParser.CALCULATOR.parse("3 - 3"))
-    println(DaitokaiParser.CALCULATOR.parse("3 / 3"))
-    println(DaitokaiParser.STRING_CALCULATOR.parse("\"pen\" + \"apple\""))
-    println(DaitokaiParser.STRING_CALCULATOR.parse("\"pen\" ppap \"apple\""))
-    println(DaitokaiParser.STRING_CALCULATOR.parse("\"pen\" daitokai \"apple\""))
-}
