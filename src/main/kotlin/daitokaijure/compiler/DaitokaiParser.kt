@@ -7,7 +7,7 @@ import java.util.function.Function as func
 /**
  * Created by yy_yank on 2016/12/17.
  */
-object DaitokaiParserK {
+object DaitokaiParser {
     private val OPERATORS = Terminals.operators("+", "-", "*", "/", "(", ")", "ppap", "daitokai")
 
     internal val STRING = Terminals.StringLiteral.PARSER.map<String>(java.util.function.Function<String, String> { it.toString() })
@@ -27,12 +27,12 @@ object DaitokaiParserK {
         val ref = Parser.newReference<Double>()
         val unit = ref.lazy().between(term("("), term(")")).or(atom)
         val parser = OperatorTable<Double>()
-                .infixl(op<bifunc<in Double, in Double, out Double>>("+", bifunc{ l, r -> l!! + r!! }), 10)
-                .infixl(op<bifunc<in Double, in Double, out Double>>("-", bifunc{ l, r -> l!! - r!! }), 10)
-                .infixl(op<bifunc<in Double, in Double, out Double>>("*", bifunc{ l, r -> l!! * r!! }), 10)
-                .infixl(op<bifunc<in Double, in Double, out Double>>("/", bifunc{ l, r -> l!! / r!! }), 20)
-                .prefix(op<func<in Double, out Double>>("-", func{ v -> -v }), 30)
-                .infixl(op<bifunc<in Double, in Double, out Double>>("ppap", bifunc{ l, r -> l!! / 100 }), 20)
+                .infixl(op<bifunc<in Double, in Double, out Double>>("+", bifunc { l, r -> l + r }), 10)
+                .infixl(op<bifunc<in Double, in Double, out Double>>("-", bifunc { l, r -> l - r }), 10)
+                .infixl(op<bifunc<in Double, in Double, out Double>>("*", bifunc { l, r -> l * r }), 10)
+                .infixl(op<bifunc<in Double, in Double, out Double>>("/", bifunc { l, r -> l / r }), 20)
+                .prefix(op<func<in Double, out Double>>("-", func { v -> -v }), 30)
+                .infixl(op<bifunc<in Double, in Double, out Double>>("ppap", bifunc { l, r -> l!! / 100 }), 20)
                 .build(unit)
         ref.set(parser)
         return parser
@@ -42,9 +42,9 @@ object DaitokaiParserK {
         val ref = Parser.newReference<String>()
         val unit = ref.lazy().between(term("("), term(")")).or(atom)
         val parser = OperatorTable<String>()
-                .infixl(op<bifunc<in String, in String, out String>>("+", bifunc{ l, r -> l + r }), 10)
-                .infixl(op<bifunc<in String, in String, out String>>("ppap", bifunc{ l, r -> "applepen" }), 20)
-                .infixl(op<bifunc<in String, in String, out String>>("daitokai", bifunc{ l, r -> "アクティブ体操" }), 20)
+                .infixl(op<bifunc<in String, in String, out String>>("+", bifunc { l, r -> l + r }), 10)
+                .infixl(op<bifunc<in String, in String, out String>>("ppap", bifunc { l, r -> "applepen" }), 20)
+                .infixl(op<bifunc<in String, in String, out String>>("daitokai", bifunc { l, r -> "アクティブ体操" }), 20)
                 .build(unit)
         ref.set(parser)
         return parser
@@ -57,18 +57,19 @@ object DaitokaiParserK {
     internal val IGNORED = Parsers.or(
             Scanners.JAVA_LINE_COMMENT,
             Scanners.JAVA_BLOCK_COMMENT,
-            Scanners.WHITESPACES).skipMany()
+            Scanners.WHITESPACES)
+            .skipMany()
 
-        val CALCULATOR = calculator(NUMBER).from(TOKENIZER, IGNORED)
-        val STRING_CALCULATOR = stringCalculator(STRING).from(STRING_TOKENIZER, IGNORED)
+    val CALCULATOR = calculator(NUMBER).from(TOKENIZER, IGNORED)
+    val STRING_CALCULATOR = stringCalculator(STRING).from(STRING_TOKENIZER, IGNORED)
 }
 
 fun main(args: Array<String>) {
-    println(DaitokaiParserK.CALCULATOR.parse("3 * 3"))
-    println(DaitokaiParserK.CALCULATOR.parse("3 + 3"))
-    println(DaitokaiParserK.CALCULATOR.parse("3 - 3"))
-    println(DaitokaiParserK.CALCULATOR.parse("3 / 3"))
-    println(DaitokaiParserK.STRING_CALCULATOR.parse("\"pen\" + \"apple\""))
-    println(DaitokaiParserK.STRING_CALCULATOR.parse("\"pen\" ppap \"apple\""))
-    println(DaitokaiParserK .STRING_CALCULATOR.parse("\"pen\" daitokai \"apple\""))
+    println(DaitokaiParser.CALCULATOR.parse("3 * 3"))
+    println(DaitokaiParser.CALCULATOR.parse("3 + 3"))
+    println(DaitokaiParser.CALCULATOR.parse("3 - 3"))
+    println(DaitokaiParser.CALCULATOR.parse("3 / 3"))
+    println(DaitokaiParser.STRING_CALCULATOR.parse("\"pen\" + \"apple\""))
+    println(DaitokaiParser.STRING_CALCULATOR.parse("\"pen\" ppap \"apple\""))
+    println(DaitokaiParser.STRING_CALCULATOR.parse("\"pen\" daitokai \"apple\""))
 }
