@@ -24,10 +24,7 @@ object Main{
         var runner: Runner? = null
         var collectingArguments = false
         val arguments = arrayListOf<String>()
-        var noReflect = false
-
         classpath.add(".")
-
         var i = 0
         while (i < args.size) {
             val arg = args[i]
@@ -57,18 +54,11 @@ object Main{
 //                runner = ExpressionRunner(next())
                 collectingArguments = true
             }
-            else if ("-no-reflect" == arg) {
-                noReflect = true
-            }
             else if (arg.startsWith("-")) {
                 throw RunnerException("unsupported argument: $arg")
             }
             else if (arg.endsWith(".jar")) {
 //                runner = JarRunner(arg)
-                collectingArguments = true
-            }
-            else if (arg.endsWith(".kts")) {
-//                runner = ScriptRunner(arg)
                 collectingArguments = true
             }
             else {
