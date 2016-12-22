@@ -24,6 +24,7 @@ object Main{
         var runner: Runner? = null
         var collectingArguments = false
         val arguments = arrayListOf<String>()
+        // current path
         classpath.add(".")
         var i = 0
         while (i < args.size) {
